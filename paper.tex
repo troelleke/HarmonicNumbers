@@ -1,0 +1,87 @@
+%\documentclass[12pt,a4paper]{article}
+%\documentclass{acm_proc_article-sp} % rather dense
+%\documentclass{sig-alternate} % more spacy than acm_proc_article
+% Remember to comment usepackage{paper} when using an ACM style.
+
+\documentclass[prodmode,acmjacm]{acmsmall}
+%\documentclass{llncs}
+
+%\usepackage{paper}
+\usepackage{amsmath}
+\usepackage{times}
+\usepackage{alltt}
+\usepackage{tabularx}
+\usepackage{subfigure}
+\usepackage{epsfig}
+%\usepackage{graphics}
+%\usepackage{listings} % Keep listings before HySpirit
+%\usepackage{HySpirit}
+\usepackage{thormath}
+\usepackage{thorirmath}
+%\usepackage{epstopdf}
+%\usepackage{german}
+\usepackage{xcolor} % required for lightgrey in mdframed
+\usepackage{mdframed}
+%\pagestyle{empty}
+
+\sloppy
+
+\title{Harmonic Numbers and Probabilities: Building Blocks for Large-scale Probabilistic Reasoning}
+\author{Thomas Roelleke and Graham White and Christian Beck}
+\date{}
+
+\parindent0cm
+\parskip1ex
+% These settings are in paper.sty as well.
+
+%\newtheorem{definition}{Definition}
+%\newtheorem{example}{Example}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{proof}{Proof} % defined in acm_proc/sig styles
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+%\category{H.3.3}{Information Search and Retrieval}{Retrieval Models}
+\category{H.3.3}{Information Storage and Retrieval}{Information Retrieval Models}
+
+\terms{Theory} 
+%There are 16 General Terms: 1. ALGORITHMS 2. MANAGEMENT 3. DESIGN 4. MEASUREMENT 5. DOCUMENTATION 6. PERFORMANCE 7. ECONOMICS 8. RELIABILITY 9. EXPERIMENTATION 10. SECURITY 11. HUMAN FACTORS 12. STANDARDIZATION 13. LANGUAGES 14. THEORY 15. LEGAL ASPECTS 16. VERIFICATION
+
+\keywords{IR Models, Probability Theory, Modelling of Dependence}
+
+\acmformat{}
+\begin{document}
+
+\begin{bottomstuff}
+
+\end{bottomstuff}
+
+\maketitle
+
+\input{body}
+
+\begin{acks}
+To be included in publication.
+\end{acks}
+
+%\nocite{Lalmas/Roelleke:2002}
+%\nocite{Roelleke/Fuhr:96} % Logic for Complex Objects, ACM SIGIR 96
+%\nocite{Roelleke:2003} % Probability of being informative, ACM SIGIR
+%\nocite{deVries/Roelleke:2005} % Relevance feedback: Gain for IDF and Loss of Entropy, ACM SIGIR 05
+%\nocite{Roelleke/Wang:2006} % Parallel derivation, ACM SIGIR
+%\nocite{Roelleke/etal:2007} % Bayes VLDB Journal 2008
+%\nocite{Roelleke/Wang:2008} % TF-IDF uncovered, ACM SIGIR
+\bibliography{bibdb} 
+%\bibliographystyle{plain}
+
+%\bibliographystyle{unsrt}
+%\bibliographystyle{unsrtnat}
+%\bibliographystyle{gerunsrt}
+%\bibliographystyle{plain}
+\bibliographystyle{apalike}
+
+\input{appendix}
+
+\end{document}
