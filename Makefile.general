@@ -1,0 +1,160 @@
+ifndef MAIN
+MAIN=paper
+endif
+# Set for presentation, review, etc
+
+PRINTER=laser415a
+
+ISPELL+=ispell
+ISPELL+=-t
+ISPELL+=-w 3
+ISPELL+=-p ./.ispell_words
+ISPELL+=-d british
+
+SOURCES+=$(MAIN).tex
+SOURCES+=abstract.tex
+SOURCES+=Background.tex
+SOURCES+=IR-Models.tex
+SOURCES+=Probability-Theory.tex
+SOURCES+=body.tex
+#SOURCES+=FIG/*.tex
+#SOURCES+=appendix.tex
+#SOURCES+=$(MAIN).bbl
+
+help::
+
+ # Dummies
+$(MAIN).bbl:
+$(MAIN).tex:
+
+help::
+	@echo "make init"
+	@echo "make links"
+	@echo "make latex"
+	@echo "make pdflatex"
+	@echo "make pdf"
+	@echo "make clean: latex dvips ps2pdf"
+
+init:: links
+links::
+include links.mk
+
+##########
+# latex
+latex::
+	$@ $(MAIN)
+dvi:: $(MAIN).dvi
+$(MAIN).dvi: $(SOURCES)
+	latex $(MAIN)
+ps:: $(MAIN)-dvips.ps
+$(MAIN)-dvips.ps: $(MAIN).dvi
+	dvips -o $@ $<
+pdf:: $(MAIN)-ps2pdf.pdf
+$(MAIN)-ps2pdf.pdf: $(MAIN)-dvips.ps
+	ps2pdf $< $@
+
+##########
+# pdflatex
+pdflatex::
+	$@ $(MAIN)
+pdf:: $(MAIN).pdf
+$(MAIN).pdf: $(SOURCES)
+	pdflatex $(MAIN)
+ps:: $(MAIN)-pdf2ps.ps
+$(MAIN)-pdf2ps.ps: $(MAIN).pdf
+	pdf2ps $< $@
+
+##########
+# bibtex
+bibtex:: bibdb.bib
+	$@ $(MAIN)
+
+index::
+	$(MAKE) makeindex
+makeindex::
+	$@ $(MAIN)
+makeindex::
+	mv $(MAIN).ind $(MAIN).ind.orig
+	perl -pe 's/begin{theindex}/begin{theindex}\\addcontentsline{toc}{chaper}{Index}/' $(MAIN).ind.orig > $(MAIN).ind
+
+
+check::
+	fgrep -i warn *.log
+
+clean::
+	$(RM) *~ *.bak
+clean::
+	-test -f $(MAIN).ps && gzip -f $(MAIN).ps
+	-test -f $(MAIN).pdf && gzip -f $(MAIN).pdf
+	$(RM) $(MAIN).{aux,bbl,blg,dvi,idx,ilg,log,toc,tmp}
+
+ispell:: ispell2
+ispell1::
+	for src in $(SOURCES); do \
+	prepare-for-ispell $$src > $$src.ispell; \
+	$(ISPELL) $$src.ispell; \
+	done
+clean::
+	$(RM) *.ispell
+ispell2::
+	for src in $(SOURCES); do \
+	$(ISPELL) $$src; \
+	done
+ispell3::
+	@echo "Remember: ispell on various files does not work on all"
+	$(ISPELL) $(SOURCES)
+
+IGNORE+=$(MAIN).log
+IGNORE+=$(MAIN).aux
+IGNORE+=$(MAIN).blg
+IGNORE+=$(MAIN).bbl
+IGNORE+=$(MAIN).dvi
+IGNORE+=$(MAIN).ps
+IGNORE+=$(MAIN).pdf
+IGNORE+=$(MAIN).gz
+IGNORE+=$(MAIN).tgz
+cvsignore::
+	test -f .$@ || echo $(IGNORE) > .$@
+
+commit::
+	cvs -q -d $(CVSROOT) commit
+update::
+	cvs -q -d $(CVSROOT) update
+
+cvs-add::
+	cvs add -d $(CVSROOT) $(MAIN).{tex,sty} .cvsignore Makefile*
+
+import::
+	@echo make cvsignore first
+	@echo cvs import repository vendortag releasetag
+
+SPREADSHEET=spreadsheet
+tables::
+	extract-tables $(SPREADSHEET).tex | make-spreadsheet-figures \
+	-caption "sheet1" \
+	-caption "sheet2" \
+	 > $@.tex
+
+print::
+	cat $(MAIN).ps | ssh -l $(USER) lucy 'lpr -P$(PRINTER)'
+
+print2::
+	cat $(MAIN).ps | ssh -l $(USER) lucy 'psnup -2 | lpr -P$(PRINTER)'
+
+
+dvips:: $(MAIN).dvi
+	$@ $<
+ps2pdf:: $(MAIN).ps
+	$@ $<
+pdf2ps:: $(MAIN).pdf
+	$@ $<
+
+clean-bbl:: $(MAIN).bbl.clean
+$(MAIN).bbl.clean: $(MAIN).bbl
+	perl -w ~/tex/clean-bbl.pl $< > $@
+
+clean-bbl:: $(MAIN).final.bbl
+$(MAIN).final.bbl:
+
+clean-bbl:: $(MAIN).clean.bbl $(MAIN).final.bbl
+	diff $^
